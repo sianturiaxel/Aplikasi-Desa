@@ -1,0 +1,46 @@
+version: "3.2"
+services:
+  php:
+    build: 
+      context: .
+    image: pansolusi/moe-php-mysql-demo:1.0.0
+    networks:
+      - frontend
+      - backend
+    environment:
+      - MYSQL_HOST=app-desa
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=adminpass
+      - MYSQL_DB=desa_db
+    volumes:
+      - ./app/:/var/www/html/
+    ports:
+      - "192.168.100.200:80:80"
+    container_name: app-desa
+  mysql:
+    image: pansolusi/mysql:5.7
+    networks:
+      - backend
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=adminpass 
+      - MYSQL_DATABASE=desa_db
+    container_name: mysql-app-desa
+  phpmyadmin:
+    image: pansolusi/phpmyadmin:4.7
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    ports:
+      - "192.168.100.201:80:80"
+    environment:
+      - PMA_HOST=moe-mysql-app
+      - PMA_PORT= 3306
+    volumes:
+      - /sessions
+    container_name: phpmyadmin-app-desa
+networks:
+  frontend:
+  backend:
